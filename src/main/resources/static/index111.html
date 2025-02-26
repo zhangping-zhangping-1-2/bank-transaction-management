@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HSBC Bank Transaction Management</title>
+    <!-- 引入 Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <style>
+        body {
+            padding: 20px;
+        }
+
+        .modal {
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            border-radius: 10px;
+        }
+    </style>
+</head>
+
+<body>
+<div class="container">
+    <h1 class="text-center mb-4">HSBC Bank Transaction Management</h1>
+    <!-- 添加查询表单 -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h2>Add Transaction</h2>
+        </div>
+        <div class="card-body">
+            <form id="addTransactionForm">
+                <div class="mb-3">
+                    <label for="addTransactionType" class="form-label">Transaction Type:</label>
+                    <input type="text" class="form-control" id="addTransactionType" required>
+                </div>
+                <div class="mb-3">
+                    <label for="addFromAccount" class="form-label">From Account:</label>
+                    <input type="text" class="form-control" id="addFromAccount" required>
+                </div>
+                <div class="mb-3">
+                    <label for="addToAccount" class="form-label">To Account:</label>
+                    <input type="text" class="form-control" id="addToAccount" required>
+                </div>
+                <div class="mb-3">
+                    <label for="addAmount" class="form-label">Amount:</label>
+                    <input type="number" class="form-control" id="addAmount" required min="0.01" step="0.01">
+                </div>
+                <div class="mb-3">
+                    <label for="addDescription" class="form-label">Description:</label>
+                    <input type="text" class="form-control" id="addDescription" required>
+                </div>
+                <div class="mb-3">
+                    <label for="addCode" class="form-label">Code:</label>
+                    <input type="text" class="form-control" id="addCode" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Add Transaction</button>
+            </form>
+        </div>
+    </div>
+    <div class="mb-4">
+        <label for="addTransactionType" class="form-label">Transaction Type:</label>
+        <input type="text" id="searchTransactionType" class="form-control d-inline-block w-auto me-2" placeholder="输入交易类型">
+        <button id="searchButton" class="btn btn-primary">查询</button>
+    </div>
+    <div class="card">
+        <div class="card-header">
+            <h2>Transaction List</h2>
+        </div>
+        <div class="card-body">
+            <table id="transactionTable" class="table table-striped table-bordered">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Transaction Type</th>
+                    <th>From Account</th>
+                    <th>To Account</th>
+                    <th>Amount</th>
+                    <th>Create Time</th>
+                    <th>Update Time</th>
+                    <th>Description</th>
+                    <th>Code</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="pagination">
+                    <button id="prevPage" class="btn btn-secondary">Previous</button>
+                    <span id="pageInfo" class="mx-3"></span>
+                    <button id="nextPage" class="btn btn-secondary">Next</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 修改交易的模态框 -->
+<div id="editModal" class="modal fade" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editModalLabel">Edit Transaction</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editTransactionForm">
+                    <input type="hidden" id="editTransactionId">
+                    <div class="mb-3">
+                        <label for="editTransactionType" class="form-label">Transaction Type:</label>
+                        <input type="text" class="form-control" id="editTransactionType" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editFromAccount" class="form-label">From Account:</label>
+                        <input type="text" class="form-control" id="editFromAccount" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editToAccount" class="form-label">To Account:</label>
+                        <input type="text" class="form-control" id="editToAccount" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editAmount" class="form-label">Amount:</label>
+                        <input type="number" class="form-control" id="editAmount" required min="0.01" step="0.01">
+                    </div>
+                    <div class="mb-3">
+                        <label for="editDescription" class="form-label">Description:</label>
+                        <input type="text" class="form-control" id="editDescription" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editCode" class="form-label">Code:</label>
+                        <input type="text" class="form-control" id="editCode" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 引入 Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"></script>
+<script>
+    const addTransactionForm = document.getElementById('addTransactionForm');
+    const transactionTable = document.getElementById('transactionTable').getElementsByTagName('tbody')[0];
+    const prevPageButton = document.getElementById('prevPage');
+    const nextPageButton = document.getElementById('nextPage');
+    const pageInfo = document.getElementById('pageInfo');
+    const editModal = new bootstrap.Modal(document.getElementById('editModal'));
+    const editTransactionForm = document.getElementById('editTransactionForm');
+    const searchTransactionTypeInput = document.getElementById('searchTransactionType');
+    const searchButton = document.getElementById('searchButton');
+
+    let currentPage = 0;
+    const pageSize = 10;
+
+    function fetchTransactions(page, transactionType = '') {
+        let url = `/api/transactions/page?page=${page}&size=${pageSize}`;
+        if (transactionType) {
+            url += `&transactionType=${transactionType}`;
+        }
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                transactionTable.innerHTML = '';
+                data.data.content.forEach(transaction => {
+                    const row = transactionTable.insertRow();
+                    row.insertCell().textContent = transaction.id;
+                    row.insertCell().textContent = transaction.transactionType;
+                    row.insertCell().textContent = transaction.fromAccount;
+                    row.insertCell().textContent = transaction.toAccount;
+                    row.insertCell().textContent = transaction.amount;
+                    row.insertCell().textContent = transaction.createTime;
+                    row.insertCell().textContent = transaction.updateTime;
+                    row.insertCell().textContent = transaction.description;
+                    row.insertCell().textContent = transaction.code;
+                    const actionsCell = row.insertCell();
+
+                    const editButton = document.createElement('button');
+                    editButton.textContent = 'Edit';
+                    editButton.classList.add('btn', 'btn-warning', 'me-2');
+                    editButton.addEventListener('click', () => openEditModal(transaction));
+                    actionsCell.appendChild(editButton);
+
+                    const deleteButton = document.createElement('button');
+                    deleteButton.textContent = 'Delete';
+                    deleteButton.classList.add('btn', 'btn-danger');
+                    deleteButton.addEventListener('click', () => deleteTransaction(transaction.id));
+                    actionsCell.appendChild(deleteButton);
+                });
+                pageInfo.textContent = `Page ${data.data.number + 1} of ${data.data.totalPages}`;
+                prevPageButton.disabled = data.data.first;
+                nextPageButton.disabled = data.data.last;
+            })
+            .catch(error => console.error('Error fetching transactions:', error));
+    }
+
+    function deleteTransaction(id) {
+        if (confirm('Are you sure you want to delete this transaction?')) {
+            fetch(`/api/transactions/${id}`, {
+                method: 'DELETE'
+            })
+                .then(response => {
+                    if (response.ok) {
+                        fetchTransactions(currentPage, searchTransactionTypeInput.value);
+                    } else {
+                        console.error('Error deleting transaction');
+                    }
+                })
+                .catch(error => console.error('Error deleting transaction:', error));
+        }
+    }
+
+    function openEditModal(transaction) {
+        document.getElementById('editTransactionId').value = transaction.id;
+        document.getElementById('editTransactionType').value = transaction.transactionType;
+        document.getElementById('editFromAccount').value = transaction.fromAccount;
+        document.getElementById('editToAccount').value = transaction.toAccount;
+        document.getElementById('editAmount').value = transaction.amount;
+        document.getElementById('editDescription').value = transaction.description;
+        document.getElementById('editCode').value = transaction.code;
+        editModal.show();
+    }
+
+    addTransactionForm.addEventListener('submit', event => {
+        event.preventDefault();
+        const transaction = {
+            transactionType: document.getElementById('addTransactionType').value,
+            fromAccount: document.getElementById('addFromAccount').value,
+            toAccount: document.getElementById('addToAccount').value,
+            amount: parseFloat(document.getElementById('addAmount').value),
+            description: document.getElementById('addDescription').value,
+            code: document.getElementById('addCode').value
+        };
+        fetch('/api/transactions', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(transaction)
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.code === 200) {
+                    fetchTransactions(currentPage, searchTransactionTypeInput.value);
+                    addTransactionForm.reset();
+                } else {
+                    console.error('Error creating transaction:', data.message);
+                }
+            })
+            .catch(error => console.error('Error creating transaction:', error));
+    });
+
+    editTransactionForm.addEventListener('submit', event => {
+        event.preventDefault();
+        const id = document.getElementById('editTransactionId').value;
+        const transaction = {
+            transactionType: document.getElementById('editTransactionType').value,
+            fromAccount: document.getElementById('editFromAccount').value,
+            toAccount: document.getElementById('editToAccount').value,
+            amount: parseFloat(document.getElementById('editAmount').value),
+            description: document.getElementById('editDescription').value,
+            code: document.getElementById('editCode').value
+        };
+        fetch(`/api/transactions/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(transaction)
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.code === 200) {
+                    fetchTransactions(currentPage, searchTransactionTypeInput.value);
+                    editModal.hide();
+                } else {
+                    console.error('Error updating transaction:', data.message);
+                }
+            })
+            .catch(error => console.error('Error updating transaction:', error));
+    });
+
+    prevPageButton.addEventListener('click', () => {
+        if (currentPage > 0) {
+            currentPage--;
+            fetchTransactions(currentPage, searchTransactionTypeInput.value);
+        }
+    });
+
+    nextPageButton.addEventListener('click', () => {
+        currentPage++;
+        fetchTransactions(currentPage, searchTransactionTypeInput.value);
+    });
+
+    searchButton.addEventListener('click', () => {
+        currentPage = 0;
+        fetchTransactions(currentPage, searchTransactionTypeInput.value);
+    });
+
+    fetchTransactions(currentPage);
+</script>
+</body>
+
+</html>
