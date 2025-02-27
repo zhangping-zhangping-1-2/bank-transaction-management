@@ -6,6 +6,8 @@
 采用 RESTful API 设计风格，具备数据验证、异常处理和缓存机制，确保系统的稳定性、可靠性和高性能。同时，项目进行了全面的单元测试和压力测试，
 并且支持 Docker 容器化部署，方便在不同环境中灵活运行。
 
+演示视频查看链接:
+
 ## 项目结构
 - `src/main/java`：Java 源代码目录
     - `com.hsbc.banktransactionmanagement.controller`：控制器层，处理 HTTP 请求
@@ -34,20 +36,25 @@
 - **jQuery**：在前端页面中实现交互逻辑。
 - **JMeter**：进行压力测试。
 
-## 运行项目
+## 线上演示访问地址
+在线演示访问地址（阿里云服务器2c2g配置，docker部署）：
+访问路径: http://39.100.182.99:8089/index.html
+
 ### 本地运行
 1. 启动本地springboot
 2. 本地访问前端页面：
 打开浏览器，访问 http://localhost:8080
+
 ###   Docker 运行
 1. 构建 Docker 镜像：
 ```sh
-docker build -t hsbc - bank - transaction - management.
+docker buildx build -t bank:1.0 -f dockerfile_hsbc_bank_1.0 .
 ```
 2. 运行 Docker 容器：
 ```sh
-   docker run -p 8080:8080 hsbc - bank - transaction - management
+   docker run --name bank1 -d -p 8089:8080 bank:1.0
 ```
+3
 ## 架构设计方案
 ###分层架构
 *采用经典的 MVC（Model - View - Controller）分层架构思想，将系统划分为控制器层（Controller）、服务层（Service）、数据访问层（DAO）和实体层（Entity），各层职责明确，提高了代码的可维护性和可扩展性。
@@ -173,7 +180,9 @@ docker build -t hsbc - bank - transaction - management.
   ![image](/image/controller_test.png)
 
 ### 压力测试
-性能测试报告: 
+**压力测试报告在/doc/jmeter-test-report目录下**
+
+性能测试报告: ![image](/image/jmeter_performance_test_report.png)
 
 聚合报告: ![image](/image/jmeter_aggregate_report.png)
 
