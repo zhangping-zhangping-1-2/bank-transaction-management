@@ -6,7 +6,7 @@
 采用 RESTful API 设计风格，具备数据验证、异常处理和缓存机制，确保系统的稳定性、可靠性和高性能。同时，项目进行了全面的单元测试和压力测试，
 并且支持 Docker 容器化部署，方便在不同环境中灵活运行。
 
-演示视频查看链接:
+[演示视频查看链接:](https://github.com/zhangping-zhangping-1-2/bank-transaction-management/blob/main/%E9%93%B6%E8%A1%8C%E4%BA%A4%E6%98%93%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F%E6%BC%94%E7%A4%BA.mp4)
 
 ## 项目结构
 - `src/main/java`：Java 源代码目录
