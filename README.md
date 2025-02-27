@@ -173,9 +173,13 @@ docker build -t hsbc - bank - transaction - management.
   ![image](/image/controller_test.png)
 
 ### 压力测试
+性能测试报告: 
 
+聚合报告: ![image](/image/jmeter_aggregate_report.png)
 
+吞吐量: ![image](/image/jmeter_throughput.png)
 
+响应时间: ![image](/image/jmeter_response_time.png)
 
 ## 页面功能展示
 *前端整体页面
